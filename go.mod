@@ -1,4 +1,4 @@
-module lenvs
+module github.com/vdmitriyev/lenvs
 
 go 1.23.4
 
