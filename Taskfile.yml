@@ -1,0 +1,62 @@
+version: '3'
+
+# should be some how automated later
+env:
+  COMMIT_DATE:
+    sh: git log -1 --format=%ad --date=short
+  COMMIT_HASH:
+    sh: git log -1 --format="%h"
+  COMMITS_COUNTER:
+    sh: git rev-list --all --count
+  PACKAGE_VERSION: "{{.COMMIT_DATE}}_{{.COMMITS_COUNTER}}_{{.COMMIT_HASH}}"
+  NAME_FILE_EXE: lenvs.exe
+  NAME_FILE_RPI: lenvs
+
+tasks:
+
+  default:
+    silent: true
+    cmds:
+      - task --list-all
+
+  go-tidy:
+    silent: true
+    run: once
+    cmds:
+      - go mod tidy
+  
+  install:
+    silent: true
+    cmds:
+      - echo "To work, the github repo must be public"
+      - go install github.com/vdmitriyev/lenvs@latest
+  
+  run:
+    silent: true
+    cmds:
+      - go run main.go
+
+  run-list:
+    silent: true
+    cmds:
+      - go run . --command list
+  print-version:
+    silent: true
+    cmds:
+      - echo "Version -> {{.PACKAGE_VERSION}}"
+
+  release:
+    silent: true
+    cmds:
+      - task: print-version
+      - go build -ldflags "-X main.version={{.PACKAGE_VERSION}}" -o {{.NAME_FILE_EXE}} .
+      - file {{.NAME_FILE_EXE}}
+  
+  build-win:
+    silent: true
+    cmds:
+      - echo "Building for Windows"
+      - task: print-version
+      - CGO_ENABLED=0 go build -a -tags netgo,osusergo -ldflags "-extldflags '-static' -s -w -X main.version={{.PACKAGE_VERSION}}" -o {{.NAME_FILE_EXE}} .
+      - echo "Checking generated file"
+      - file {{.NAME_FILE_EXE}}
