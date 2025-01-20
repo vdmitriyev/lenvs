@@ -10,14 +10,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var version string = "0.0" // do not remove or modify
-
 func init() {
 }
 
 func main() {
 	debugPtr := flag.Bool("debug", false, "print all imported environment variables")
-	versionPtr := flag.Bool("version", false, "print the current version")
+	versionPtr := flag.Bool("version", false, "print info about the current version")
+	versionOnlyPtr := flag.Bool("version-only", false, "print the current version only")
 	envFilePtr := flag.String("envfile", ".env", "path to .env file")
 
 	flag.Parse()
@@ -37,9 +36,15 @@ func main() {
 		log.Printf("No file with environment variables found at: %s\n", *envFilePtr)
 	}
 
+	if *versionOnlyPtr {
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
 	if *versionPtr {
-		fmt.Println("version: ", version)
-		os.Exit(0) // Exit after printing version
+		fmt.Println("Version: ", version)
+		fmt.Println("Build: ", build)
+		os.Exit(0)
 	}
 
 	if *debugPtr {

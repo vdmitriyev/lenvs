@@ -8,10 +8,13 @@ env:
     sh: git log -1 --format="%h"
   COMMITS_COUNTER:
     sh: git rev-list --all --count
-  PACKAGE_VERSION: "{{.COMMIT_DATE}}_{{.COMMITS_COUNTER}}_{{.COMMIT_HASH}}"
+  PACKAGE_BUILD: "{{.COMMIT_DATE}}_{{.COMMITS_COUNTER}}_{{.COMMIT_HASH}}"
   NAME_FILE_EXE: lenvs.exe
   NAME_FILE_RPI: lenvs
 
+includes:
+    git: Taskfile_git_tag.yml
+    
 tasks:
 
   default:
@@ -40,16 +43,18 @@ tasks:
     silent: true
     cmds:
       - go run . --command list
+      
   print-version:
     silent: true
     cmds:
-      - echo "Version -> {{.PACKAGE_VERSION}}"
+      - echo "Release (hash) -> {{.PACKAGE_BUILD}}"
+      - go run . --version
 
   release:
     silent: true
     cmds:
       - task: print-version
-      - go build -ldflags "-X main.version={{.PACKAGE_VERSION}}" -o {{.NAME_FILE_EXE}} .
+      - go build -ldflags "-X main.build={{.PACKAGE_BUILD}}" -o {{.NAME_FILE_EXE}} .
       - file {{.NAME_FILE_EXE}}
   
   build-win:
@@ -57,6 +62,6 @@ tasks:
     cmds:
       - echo "Building for Windows"
       - task: print-version
-      - CGO_ENABLED=0 go build -a -tags netgo,osusergo -ldflags "-extldflags '-static' -s -w -X main.version={{.PACKAGE_VERSION}}" -o {{.NAME_FILE_EXE}} .
+      - CGO_ENABLED=0 go build -a -tags netgo,osusergo -ldflags "-extldflags '-static' -s -w -X main.build={{.PACKAGE_BUILD}}" -o {{.NAME_FILE_EXE}} .
       - echo "Checking generated file"
       - file {{.NAME_FILE_EXE}}
