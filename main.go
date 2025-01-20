@@ -21,6 +21,17 @@ func main() {
 
 	flag.Parse()
 
+	if *versionOnlyPtr {
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
+	if *versionPtr {
+		fmt.Println("Version: ", version)
+		fmt.Println("Build: ", build)
+		os.Exit(0)
+	}
+
 	// If no --envfile is provided and there are command-line arguments,
 	// assume the first argument is the path to the .env file
 	if *envFilePtr == ".env" && flag.NArg() > 0 {
@@ -34,17 +45,6 @@ func main() {
 	// Load environment from specified file
 	if err := godotenv.Load(*envFilePtr); err != nil {
 		log.Printf("No file with environment variables found at: %s\n", *envFilePtr)
-	}
-
-	if *versionOnlyPtr {
-		fmt.Println(version)
-		os.Exit(0)
-	}
-
-	if *versionPtr {
-		fmt.Println("Version: ", version)
-		fmt.Println("Build: ", build)
-		os.Exit(0)
 	}
 
 	if *debugPtr {
