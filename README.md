@@ -1,6 +1,6 @@
 ## About
 
-Loads environmental variables from an .env file
+Loads environmental variables from an .env file. Runs a sub-process with OS specific terminal that will get environment variables read from an '.env' file.
 
 ## Install
 

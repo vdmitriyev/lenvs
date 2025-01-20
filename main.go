@@ -20,21 +20,6 @@ func main() {
 
 	flag.Parse()
 
-	usage := `
-	Run a sub-process with OS specific terminal with an environment variables read from an '.env' file
-	
-	lenvs <FILE_PATH>
-
-	example
-	  lenvs .env
-	`
-
-	args := flag.Args()
-	if len(args) == 0 {
-		fmt.Println(usage)
-		return
-	}
-
 	if *versionOnlyPtr {
 		fmt.Println(version)
 		return
