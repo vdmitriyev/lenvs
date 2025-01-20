@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/joho/godotenv"
 )
-
-func init() {
-}
 
 func main() {
 	debugPtr := flag.Bool("debug", false, "print all imported environment variables")
@@ -21,15 +20,30 @@ func main() {
 
 	flag.Parse()
 
+	usage := `
+	Run a sub-process with OS specific terminal with an environment variables read from an '.env' file
+	
+	lenvs <FILE_PATH>
+
+	example
+	  lenvs .env
+	`
+
+	args := flag.Args()
+	if len(args) == 0 {
+		fmt.Println(usage)
+		return
+	}
+
 	if *versionOnlyPtr {
 		fmt.Println(version)
-		os.Exit(0)
+		return
 	}
 
 	if *versionPtr {
 		fmt.Println("Version: ", version)
 		fmt.Println("Build: ", build)
-		os.Exit(0)
+		return
 	}
 
 	// If no --envfile is provided and there are command-line arguments,
@@ -53,6 +67,19 @@ func main() {
 			pair := strings.SplitN(e, "=", 2)
 			fmt.Printf("%s = %s\n", pair[0], pair[1])
 		}
-		os.Exit(0) // Exit after debugging
+		return
 	}
+
+	var cmd string
+	if runtime.GOOS == "windows" {
+		cmd = "cmd"
+	} else {
+		cmd = "bash"
+	}
+
+	command := exec.Command(cmd)
+	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	command.Run()
 }
