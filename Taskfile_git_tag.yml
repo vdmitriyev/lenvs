@@ -14,6 +14,7 @@ tasks:
       - git tag v{{.PACKAGE_VERSION}}
       - echo "latest git tag"
       - git describe --tags --abbrev=0
+      - task: tag-latest
 
   tag-re-create:
     desc: re-creates a new git tag
@@ -23,6 +24,18 @@ tasks:
       - git tag -d v{{.PACKAGE_VERSION}}
       - task: tag-create
 
+  tag-latest:
+    desc: creates `latest` git tag
+    aliases: [gtl]
+    silent: true
+    vars:
+      TAG_NAME: latest
+    cmds:
+      - git tag -d {{.TAG_NAME}}
+      - git push origin :refs/tags/{{.TAG_NAME}} 
+      - git tag {{.TAG_NAME}}
+      - git push origin {{.TAG_NAME}}
+  
   tag-show:
     desc: shows all git tags
     aliases: [gts]

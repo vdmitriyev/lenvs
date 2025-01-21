@@ -13,6 +13,17 @@ import (
 )
 
 func main() {
+
+	flag.Usage = func() {
+		fmt.Println("`lenvs` starts a sub-process with an operating system specific terminal (e.g., cmd, bash, etc.).")
+		fmt.Println("The terminal will get environment variables read from an '.env' file.")
+		fmt.Println("\nArguments:")
+		flag.PrintDefaults()
+		fmt.Println("\nExample usage:")
+		fmt.Println("\tlenvs .env")
+
+	}
+
 	debugPtr := flag.Bool("debug", false, "print all imported environment variables")
 	versionPtr := flag.Bool("version", false, "print info about the current version")
 	versionOnlyPtr := flag.Bool("version-only", false, "print the current version only")

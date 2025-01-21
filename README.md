@@ -11,6 +11,13 @@ Install
 go install github.com/vdmitriyev/lenvs@latest
 ```
 
+## Usage
+
+Following CLI command should load 
+```
+lenvs .env
+```
+
 ## License
 
 [LICENSE](LICENSE)
