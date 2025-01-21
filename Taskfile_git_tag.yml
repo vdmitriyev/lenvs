@@ -31,8 +31,8 @@ tasks:
     vars:
       TAG_NAME: latest
     cmds:
-      - git tag -d {{.TAG_NAME}}
-      - git push origin :refs/tags/{{.TAG_NAME}} 
+      - defer: git tag -d {{.TAG_NAME}}
+      - defer: git push origin :refs/tags/{{.TAG_NAME}} 
       - git tag {{.TAG_NAME}}
       - git push origin {{.TAG_NAME}}
   
