@@ -13,55 +13,57 @@ env:
   NAME_FILE_RPI: lenvs
 
 includes:
-    git: Taskfile_git_tag.yml
+    go: taskfiles/Taskfile_go.yml
+    git: taskfiles/Taskfile_git_tag.yml
     
 tasks:
 
   default:
+    desc: lists available tasks
     silent: true
     cmds:
       - task --list-all
 
-  go-tidy:
-    silent: true
-    run: once
-    cmds:
-      - go mod tidy
-  
   install:
+    desc: installs package from github as CLI
     silent: true
     cmds:
       - echo "To work, the github repo must be public"
       - go install github.com/vdmitriyev/lenvs@latest
   
   run:
+    desc: runs package
     silent: true
     cmds:
       - go run main.go
 
   run-list:
+    desc: runs `--command list` of the packacge
     silent: true
     cmds:
       - go run . --command list
       
-  print-version:
+  version:
+    desc: prints current version of the packacge
     silent: true
     cmds:
       - echo "Release (hash) -> {{.PACKAGE_BUILD}}"
       - go run . --version
 
   release:
+    desc: makes release
     silent: true
     cmds:
-      - task: print-version
+      - task: version
       - go build -ldflags "-X main.build={{.PACKAGE_BUILD}}" -o {{.NAME_FILE_EXE}} .
       - file {{.NAME_FILE_EXE}}
   
   build-win:
+    desc: makes a build for `win` platform
     silent: true
     cmds:
       - echo "Building for Windows"
-      - task: print-version
+      - task: version
       - CGO_ENABLED=0 go build -a -tags netgo,osusergo -ldflags "-extldflags '-static' -s -w -X main.build={{.PACKAGE_BUILD}}" -o {{.NAME_FILE_EXE}} .
       - echo "Checking generated file"
       - file {{.NAME_FILE_EXE}}
