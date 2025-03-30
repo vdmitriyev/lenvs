@@ -1,0 +1,10 @@
+version: '3'
+
+tasks:
+
+  tidy:
+    desc: runs 'go mod tidy'
+    silent: true
+    run: once
+    cmds:
+      - go mod tidy
